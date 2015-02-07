@@ -1,0 +1,11 @@
+df<-read.table("household_power_consumption.txt",header=T, sep=";")
+df$Date<-as.Date(df$Date,"%d/%m/%Y")
+sdf<-subset(df, Date=='2007-02-01')
+sdf2<-subset(df, Date=='2007-02-02')
+sdf3<-rbind(sdf,sdf2)
+h<-sdf3$Global_active_power
+h<-gsub("?","",h)
+h<-as.numeric(h)
+png(filename='plot1.png', width = 480, height = 480, units='px')
+hist(h,col='red',xlab='Global active power (kilowatts)',main='Global active power')
+dev.off()
