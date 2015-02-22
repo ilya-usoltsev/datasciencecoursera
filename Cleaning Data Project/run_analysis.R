@@ -17,7 +17,6 @@ ytrain<-read.table('y_train.txt')
 ysum<-rbind(ytest,ytrain)
 names(ysum)<-'activity'
 xms<-cbind(ysum,xms)
-head(xms)
 for(i in seq_len(length(xms$subject))){
         if(xms$activity[i]==1){
                 xms$activity[i]<-'WALKING'
