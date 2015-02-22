@@ -1,0 +1,55 @@
+xtest<-read.table('X_test.txt')
+xtrain<-read.table('X_train.txt')
+xsum<-rbind(xtest,xtrain)
+features<-read.table('features.txt')
+names(xsum)<-features$V2
+c1<-grep('mean',names(xsum))
+c2<-grep('std',names(xsum))
+c3<-c(c1,c2)
+xms<-xsum[,c3]
+strain<-read.table('subject_train.txt')
+stest<-read.table('subject_test.txt')
+ssum<-rbind(stest,strain)
+names(ssum)<-'subject'
+xms<-cbind(ssum,xms)
+ytest<-read.table('y_test.txt')
+ytrain<-read.table('y_train.txt')
+ysum<-rbind(ytest,ytrain)
+names(ysum)<-'activity'
+xms<-cbind(ysum,xms)
+head(xms)
+for(i in seq_len(length(xms$subject))){
+        if(xms$activity[i]==1){
+                xms$activity[i]<-'WALKING'
+        }
+        if(xms$activity[i]==2){
+                xms$activity[i]<-'WALKING_UPSTAIRS'
+        }
+        if(xms$activity[i]==3){
+                xms$activity[i]<-'WALKING_DOWSTAIRS'
+        }
+        if(xms$activity[i]==4){
+                xms$activity[i]<-'SITTING'
+        }
+        if(xms$activity[i]==5){
+                xms$activity[i]<-'STANDING'
+        }
+        if(xms$activity[i]==6){
+                xms$activity[i]<-'LAYING'
+        }
+}
+library(reshape2)
+m2<-0
+for(i in 3:81){
+        test<-tapply(xms[,i],list(xms$subject,xms$activity),mean)
+        m<-melt(test)
+        if(m2==0){
+                m2<-m
+                names(m2)[i]<-names(xms)[i]
+                next
+        }
+        m2$n<-m$value
+        names(m2)[i]<-names(xms)[i]
+}        
+names(m2)[1:2]<-c('subject','activity')
+write.table(m2, "m2.txt", sep="\t", row.name=FALSE)   
